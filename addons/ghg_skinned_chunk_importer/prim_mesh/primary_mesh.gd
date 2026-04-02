@@ -184,78 +184,6 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 							surf_tool3.add_index(faa)
 							surf_tool3.add_index(fbb)
 							surf_tool3.add_index(fcc)
-					elif vertexCountb == int(4):
-						for j in range(1):
-							var vx1 = file.get_16()
-							var vy1 = file.get_16()
-							var vz1 = file.get_16()
-							var nz1 = file.get_16()
-							var uvx1 = file.get_16()
-							var uvy1 = file.get_16()
-							var unkk = file.get_32()
-							
-							var vx2 = file.get_16()
-							var vy2 = file.get_16()
-							var vz2 = file.get_16()
-							var nz2 = file.get_16()
-							var uvx2 = file.get_16()
-							var uvy2 = file.get_16()
-							var unkk2 = file.get_32()
-							
-							var vx3 = file.get_16()
-							var vy3 = file.get_16()
-							var vz3 = file.get_16()
-							var nz3 = file.get_16()
-							var uvx3 = file.get_16()
-							var uvy3 = file.get_16()
-							var unkk3 = file.get_32()
-							
-							var vx4 = file.get_16()
-							var vy4 = file.get_16()
-							var vz4 = file.get_16()
-							var nz4 = file.get_16()
-							var uvx4 = file.get_16()
-							var uvy4 = file.get_16()
-							var unkk4 = file.get_32()
-							
-							var signed_vx1: int = u16_to_s16(vx1)
-							var signed_vy1: int = u16_to_s16(vy1)
-							var signed_vz1: int = u16_to_s16(vz1)
-							var signed_vx2: int = u16_to_s16(vx2)
-							var signed_vy2: int = u16_to_s16(vy2)
-							var signed_vz2: int = u16_to_s16(vz2)
-							var signed_vx3: int = u16_to_s16(vx3)
-							var signed_vy3: int = u16_to_s16(vy3)
-							var signed_vz3: int = u16_to_s16(vz3)
-							var signed_vx4: int = u16_to_s16(vx4)
-							var signed_vy4: int = u16_to_s16(vy4)
-							var signed_vz4: int = u16_to_s16(vz4)
-							
-							
-							if vy3 == vy4:
-								surf_tool3.add_vertex(Vector3(float(signed_vx1)/4096,float(signed_vy1/4096),float(-signed_vz1/4096)))
-								surf_tool3.add_vertex(Vector3(float(signed_vx2)/4096,float(signed_vy2/4096),float(-signed_vz2/4096)))
-								surf_tool3.add_vertex(Vector3(float(signed_vx3)/4096,float(signed_vy3/4096),float(-signed_vz3/4096)))
-								surf_tool3.add_vertex(Vector3(float(signed_vx4)/4096,float(signed_vy4/4096),float(-signed_vz4/4096)))
-								for i in range(vertexCountb-3):
-									faa1+=1*4
-									fbb1+=1*4
-									fcc1+=1*4
-									fdd1+=1*4
-									surf_tool3.add_index(faa1)
-									surf_tool3.add_index(fbb1)
-									surf_tool3.add_index(fcc1)
-									surf_tool3.add_index(fbb1)
-									surf_tool3.add_index(fcc1)
-									surf_tool3.add_index(fdd1)
-							elif vx2 == vy3:
-								pass
-								
-							elif vx3 == vy4:
-								pass
-								
-							elif vy2 == vy3:
-								pass
 							
 							
 						
@@ -296,7 +224,6 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 			uvs.resize(vertexCount)
 			normals.resize(vertexCount)
 			surf_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
-			surf_tool2.begin(Mesh.PRIMITIVE_TRIANGLES)
 			
 			#var faces = [[0,1,2]]
 			if flags1 == int(108):
@@ -317,11 +244,15 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 						var vy1 = vy
 						var vz1 = vz
 						
+						var vxa = snapped(vx,0.001)
+						var vya = snapped(vy,0.001)
+						var vza = snapped(vz,0.001)
+						
 						if vx >= float(10000) and vy >= float(10000) and vz >= float(10000) or vx <= float(-10000) and vy <= float(-10000) and vz <= float(-10000):
 							vx1-=vx1
 							vy1-=vy1
 							vz1-=vz1
-						surf_tool.add_vertex(Vector3(vx1,vy1,-vz1))
+						surf_tool.add_vertex(Vector3(vxa,vya,-vza))
 						var type5 = type4==0
 						fa+=1
 						fb+=1
