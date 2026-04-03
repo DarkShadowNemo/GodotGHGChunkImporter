@@ -65,10 +65,51 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 	var bna=[]
 	var stack=[]
 	
+	var bone_names = []
+	
+	var iddx1=0
+	
+	var bonename = "%s" % iddx1
+	
 	var boncount = Skeleton3D.new()
 	boncount.name = "GHG Armature"
 	root_node.add_child(boncount)
 	boncount.owner = root_node
+	for i in range(BoneCount):
+		boncount.add_bone("%s" % i)
+	file.seek(bonesize1)
+	for i in range(BoneCount):
+		custom_seek(file,64,1)
+		custom_seek(file,16,1)
+		var parent_id = file.get_8()
+		var s_idx : int=u8_to_s8(parent_id)
+		custom_seek(file,15,1)
+		boncount.set_bone_parent(i,s_idx)
+	file.seek(bonesize3)
+	for i in range(BoneCount):
+		var ScaleX = file.get_float()
+		var rotationz = file.get_float()
+		var rotationy = file.get_float()
+		var null1 = file.get_float()
+		var nrotationz = file.get_float()
+		var ScaleY = file.get_float()
+		var rotationx = file.get_float()
+		var nrotationy = file.get_float()
+		var null2 = file.get_float()
+		var nrotationx = file.get_float()
+		var ScaleZ = file.get_float()
+		var null3 = file.get_float()
+		var posx = -file.get_float()
+		var posy = -file.get_float()
+		var posz = -file.get_float()
+		var ScaleW = file.get_float()
+		
+		
+		boncount.set_bone_pose_position(i, Vector3(posx,posy,-posz))
+		
+		
+
+	
 							
 						
 					
@@ -132,6 +173,8 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 	var mat03 = StandardMaterial3D.new()
 	mat03.cull_mode = BaseMaterial3D.CULL_DISABLED
 	
+	var switchprim=0
+	
 	while file.get_position() < file.get_length():
 		var Chunk = file.get_32()
 		if Chunk == int(16777731):
@@ -180,21 +223,38 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 							var signed_vy: int = u16_to_s16(vy3)
 							var signed_vz: int = u16_to_s16(vz3)
 							
+							var signed_uvx: int = u16_to_s16(uvx3)
+							var signed_uvy: int = u16_to_s16(uvy3)
+							
 							var ssigned_vx = float(signed_vx)/4096
 							var ssigned_vy = float(signed_vy)/4096
 							var ssigned_vz = float(signed_vz)/4096
 							
+							var ssigned_uvx = float(signed_uvx)/4096
+							var ssigned_uvy = float(signed_uvy)/4096
+							
+							var ssigned_vxx = snapped(ssigned_vx,0.001)
+							var ssigned_vyy = snapped(ssigned_vy,0.001)
+							var ssigned_vzz = snapped(ssigned_vz,0.001)
 							
 							
-							surf_tool3.add_vertex(Vector3(ssigned_vx,ssigned_vy,-ssigned_vz))
-						for i in range(vertexCountb-2):
-							faa+=1*3
-							fbb+=1*3
-							fcc+=1*3
 							
-							surf_tool3.add_index(faa)
-							surf_tool3.add_index(fbb)
-							surf_tool3.add_index(fcc)
+							
+							surf_tool3.set_uv(Vector2(ssigned_uvx,-ssigned_uvy))
+							surf_tool3.add_vertex(Vector3(ssigned_vxx,ssigned_vyy,-ssigned_vzz))
+						custom_seek(file,78,1)
+						var faceCount = file.get_8()
+						var flg1 = file.get_8()
+						if flg1 == int(110):
+							if faceCount == int(1):
+								for i in range(vertexCountb-2):
+									faa+=1*3
+									fbb+=1*3
+									fcc+=1*3
+									
+									surf_tool3.add_index(faa)
+									surf_tool3.add_index(fbb)
+									surf_tool3.add_index(fcc)
 							
 							
 						
