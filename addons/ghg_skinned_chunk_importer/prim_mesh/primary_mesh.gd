@@ -36,6 +36,12 @@ func u16_to_s16(u16: int) -> int:
 	if u16 > 0x7FFF:
 		return u16 - 0x10000
 	return u16
+	
+func s16_to_float(s16_value: int) -> float:
+	if s16_value & 0x8000:  # If sign bit is set
+		s16_value -= 0x10000  # Convert to negative value
+	return float(s16_value) / 4096.0
+
 func _primary_mesh_(file : FileAccess, source_file : String):
 	file.seek(0)
 	
@@ -63,10 +69,9 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 	boncount.name = "GHG Armature"
 	root_node.add_child(boncount)
 	boncount.owner = root_node
-		
-	
-	var name_i=0
-	
+							
+						
+					
 	file.seek(0)
 	
 	var faces4=[]
@@ -175,7 +180,13 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 							var signed_vy: int = u16_to_s16(vy3)
 							var signed_vz: int = u16_to_s16(vz3)
 							
-							surf_tool3.add_vertex(Vector3(signed_vx,signed_vy,-signed_vz))
+							var ssigned_vx = float(signed_vx)/4096
+							var ssigned_vy = float(signed_vy)/4096
+							var ssigned_vz = float(signed_vz)/4096
+							
+							
+							
+							surf_tool3.add_vertex(Vector3(ssigned_vx,ssigned_vy,-ssigned_vz))
 						for i in range(vertexCountb-2):
 							faa+=1*3
 							fbb+=1*3
@@ -332,7 +343,6 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 							var vx2a = snapped(vx2,0.001)
 							var vy2a = snapped(vy2,0.001)
 							var vz2a = snapped(vz2,0.001)
-							
 							if vx2 >= float(10000) and vy2 >= float(10000) and vz2 >= float(10000) or vx2 <= float(-10000) and vy2 <= float(-10000) and vz2 <= float(-10000):
 								vx1-=vx1
 								vy1-=vy1
@@ -363,7 +373,8 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 				
 					
 			#array_mesh3 = surf_tool3.commit(array_mesh3)
-				
+	
+	
 	immeediate_mesh2_.mesh = array_mesh2
 	immeediate_mesh2_.name = "0x04020001 ghg 3"
 	root_node.add_child(immeediate_mesh2_)
