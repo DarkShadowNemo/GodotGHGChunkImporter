@@ -8,6 +8,8 @@ const SEEK_SET := 0
 const SEEK_CUR := 1
 const SEEK_END := 2
 
+@export var xScale: float = 1
+
 
 func custom_seek(file: FileAccess, offset: int, whence: int) -> void:
 	var new_pos := 0
@@ -44,8 +46,6 @@ func s16_to_float(s16_value: int) -> float:
 
 func _primary_mesh_(file : FileAccess, source_file : String):
 	file.seek(0)
-	
-	
 	
 	var FileSize = file.get_32()
 	var null01 = file.get_32()
@@ -86,6 +86,16 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 		custom_seek(file,15,1)
 		boncount.set_bone_parent(i,s_idx)
 	file.seek(bonesize3)
+	
+	var xposx=0
+	var yposy=0
+	var zposz=0
+	var idx1a=-1
+	
+	var nposx=0
+	var nposy=0
+	var nposz=0
+	
 	for i in range(BoneCount):
 		var ScaleX = file.get_float()
 		var rotationz = file.get_float()
@@ -104,8 +114,10 @@ func _primary_mesh_(file : FileAccess, source_file : String):
 		var posz = -file.get_float()
 		var ScaleW = file.get_float()
 		
+		boncount.set_bone_pose_position(i, Vector3(ScaleX-ScaleX+posx*ScaleX,ScaleY-ScaleY+posy*ScaleY,ScaleZ-ScaleZ+-posz*ScaleZ))
+	
+		boncount.set_bone_pose_scale(i,Vector3(1,1,1))
 		
-		boncount.set_bone_pose_position(i, Vector3(posx,posy,-posz))
 		
 		
 
